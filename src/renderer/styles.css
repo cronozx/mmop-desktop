@@ -1,0 +1,490 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+	--app-bg: #171b22;
+	--surface: #1a2029;
+	--surface-strong: #1e2530;
+	--surface-soft: #161b22;
+	--surface-border: rgba(255, 255, 255, 0.10);
+	--text-primary: #fafafa;
+	--text-muted: #a1a1aa;
+	/* Accent family: emerald → cyan "aurora". Used for primary actions,
+	   focus rings, and highlight glows — keep surfaces neutral so the
+	   accents are what stands out. Change these tokens to retheme. */
+	--accent: #34d399;
+	--accent-2: #67e8f9;
+	--accent-soft: rgba(52, 211, 153, 0.18);
+	--accent-border: rgba(52, 211, 153, 0.5);
+	--accent-glow: rgba(52, 211, 153, 0.3);
+	--accent-bright: #6ee7b7;
+	--gradient-aurora: linear-gradient(120deg, #6ee7b7 0%, #34d399 55%, #22d3ee 135%);
+	--text-secondary: #e4e4e7;
+	--text-faint: #71717a;
+	--font-sans: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: 'Manrope', 'Segoe UI', sans-serif;
+	color: var(--text-primary);
+	/* Fixed aurora glows behind everything: subtle enough to keep surfaces
+	   readable, strong enough that the app doesn't read as flat gray. */
+	background:
+		radial-gradient(80% 60% at 12% -5%, rgba(16, 185, 129, 0.16), transparent 60%),
+		radial-gradient(70% 55% at 95% 8%, rgba(34, 211, 238, 0.12), transparent 60%),
+		radial-gradient(90% 70% at 50% 110%, rgba(52, 211, 153, 0.10), transparent 60%),
+		var(--app-bg);
+	background-attachment: fixed;
+}
+
+/* Isometric cube field behind everything — the website's signature backdrop. */
+body::before {
+	content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+	background-image:
+		linear-gradient(30deg, rgba(16,185,129,0.10) 12%, transparent 12.5%, transparent 87%, rgba(16,185,129,0.10) 87.5%, rgba(16,185,129,0.10)),
+		linear-gradient(150deg, rgba(16,185,129,0.10) 12%, transparent 12.5%, transparent 87%, rgba(16,185,129,0.10) 87.5%, rgba(16,185,129,0.10)),
+		linear-gradient(30deg, rgba(16,185,129,0.10) 12%, transparent 12.5%, transparent 87%, rgba(16,185,129,0.10) 87.5%, rgba(16,185,129,0.10)),
+		linear-gradient(150deg, rgba(16,185,129,0.10) 12%, transparent 12.5%, transparent 87%, rgba(16,185,129,0.10) 87.5%, rgba(16,185,129,0.10)),
+		linear-gradient(60deg, rgba(255,255,255,0.045) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.045) 75%, rgba(255,255,255,0.045)),
+		linear-gradient(60deg, rgba(255,255,255,0.045) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.045) 75%, rgba(255,255,255,0.045));
+	background-size: 80px 140px;
+	background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+	-webkit-mask-image: radial-gradient(150% 110% at 50% -8%, #000 22%, transparent 90%);
+	mask-image: radial-gradient(150% 110% at 50% -8%, #000 22%, transparent 90%);
+}
+
+h1, h2, h3 {
+	font-family: 'Manrope', 'Segoe UI', sans-serif;
+	letter-spacing: -0.01em;
+}
+
+#root {
+	min-height: 100vh;
+}
+
+.app-shell {
+	position: relative;
+	min-height: 100vh;
+	overflow: hidden;
+}
+
+.app-navbar {
+	-webkit-app-region: drag;
+	user-select: none;
+}
+
+.app-navbar button,
+.app-navbar a,
+.app-navbar input,
+.app-navbar textarea,
+.app-navbar select,
+.app-navbar [data-no-drag='true'] {
+	-webkit-app-region: no-drag;
+}
+
+.app-container {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 84rem;
+	padding: 1.5rem;
+	animation: page-enter 280ms ease-out;
+}
+
+.clean-hero {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--surface-border);
+	border-radius: 1rem;
+	background:
+		radial-gradient(36rem 16rem at 85% -30%, var(--accent-soft), transparent 65%),
+		var(--surface-strong);
+	padding: 1.5rem;
+}
+
+.clean-hero::after {
+	content: '';
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, var(--accent-border), rgba(103, 232, 249, 0.4), transparent);
+	pointer-events: none;
+}
+
+.clean-panel {
+	border: 1px solid var(--surface-border);
+	border-radius: 0.875rem;
+	background: var(--surface);
+}
+
+/* Interactive cards (game grid, modpack list): lift + accent edge on hover. */
+.clean-card-hover {
+	transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.clean-card-hover:hover {
+	transform: translateY(-3px);
+	border-color: var(--accent-border);
+	box-shadow: 0 10px 30px -12px var(--accent-glow);
+}
+
+.clean-panel-muted {
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 0.75rem;
+	background: var(--surface-soft);
+}
+
+.clean-input,
+.clean-select,
+.clean-textarea {
+	width: 100%;
+	border: 1px solid rgba(255, 255, 255, 0.10);
+	border-radius: 0.625rem;
+	background: #10141a;
+	color: #e4e4e7;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.clean-input,
+.clean-select {
+	min-height: 2.9rem;
+	padding: 0.62rem 0.85rem;
+}
+
+.clean-textarea {
+	padding: 0.75rem 0.9rem;
+}
+
+.clean-input:focus,
+.clean-select:focus,
+.clean-textarea:focus {
+	outline: none;
+	border-color: var(--accent-border);
+	box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.clean-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	border-radius: 0.625rem;
+	padding: 0.62rem 0.95rem;
+	font-weight: 600;
+	transition: transform 0.12s ease, opacity 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.clean-button:active {
+	transform: translateY(1px);
+}
+
+.clean-button-primary {
+	color: #062019;
+	border: 1px solid rgba(52, 211, 153, 0.6);
+	background: linear-gradient(120deg, #6ee7b7 0%, #34d399 55%, #22d3ee 135%);
+	box-shadow: 0 4px 18px -8px var(--accent-glow);
+}
+
+.clean-button-primary:hover {
+	border-color: rgba(52, 211, 153, 0.85);
+	box-shadow: 0 6px 24px -8px rgba(52, 211, 153, 0.5);
+	filter: brightness(1.06);
+}
+
+.clean-button-soft {
+	border: 1px solid rgba(161, 161, 170, 0.45);
+	color: #f4f4f5;
+	background: rgba(35, 42, 52, 0.4);
+}
+
+.clean-button-soft:hover {
+	border-color: rgba(212, 212, 216, 0.6);
+	background: rgba(35, 42, 52, 0.6);
+}
+
+.clean-button-ghost {
+	border: 1px solid rgba(71, 85, 105, 0.4);
+	color: #d4d4d8;
+	background: transparent;
+}
+
+.clean-button-ghost:hover {
+	border-color: rgba(161, 161, 170, 0.55);
+	color: #fafafa;
+	background: rgba(26, 32, 41, 0.5);
+}
+
+.clean-button-danger {
+	border: 1px solid rgba(239, 68, 68, 0.45);
+	color: #fecaca;
+	background: rgba(127, 29, 29, 0.35);
+}
+
+.clean-button-danger:hover {
+	border-color: rgba(248, 113, 113, 0.7);
+}
+
+.window-control-button {
+	-webkit-app-region: no-drag;
+}
+
+.clean-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	border-radius: 999px;
+	padding: 0.2rem 0.6rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	border: 1px solid rgba(71, 85, 105, 0.4);
+	background: rgba(26, 32, 41, 0.7);
+	color: #e4e4e7;
+}
+
+.clean-divider {
+	border-top: 1px solid rgba(71, 85, 105, 0.35);
+}
+
+.clean-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(100, 116, 139, 0.5) rgba(22, 27, 34, 0.4);
+}
+
+.clean-scroll::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+.clean-scroll::-webkit-scrollbar-track {
+	background: rgba(22, 27, 34, 0.4);
+	border-radius: 9999px;
+}
+
+.clean-scroll::-webkit-scrollbar-thumb {
+	background: rgba(100, 116, 139, 0.5);
+	border-radius: 9999px;
+	border: 2px solid rgba(22, 27, 34, 0.45);
+}
+
+/* Dialog entrance: backdrop fades, panel rises and settles with a confident
+   ease-out. State change, not decoration — kept short so a task isn't blocked. */
+.modal-overlay {
+	animation: modal-overlay-in 160ms ease-out;
+}
+
+.modal-panel {
+	animation: modal-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-overlay-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes modal-panel-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px) scale(0.985);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* Launch celebration — the one budgeted "glow" moment in the app. Fired once
+   when the game actually starts: the primary button brightens and an aurora
+   ring expands off it, then everything settles. Confirms the hero action;
+   never loops. */
+.launch-celebrate {
+	animation: launch-brighten 820ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.launch-ring {
+	position: absolute;
+	inset: 0;
+	border-radius: 0.625rem;
+	border: 2px solid var(--accent-2);
+	pointer-events: none;
+	opacity: 0;
+	animation: launch-ring 820ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes launch-brighten {
+	0% { filter: brightness(1); box-shadow: 0 4px 18px -8px var(--accent-glow); }
+	30% { filter: brightness(1.32); box-shadow: 0 0 26px -2px rgba(103, 232, 249, 0.65), 0 8px 30px -6px var(--accent-glow); }
+	100% { filter: brightness(1); box-shadow: 0 4px 18px -8px var(--accent-glow); }
+}
+
+@keyframes launch-ring {
+	0% { opacity: 0.7; transform: scale(1); }
+	100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* Completion checkmark: the stroke draws itself in when a result lands as a
+   success, so a finished download/launch/export reads as done, not just shown. */
+.check-draw {
+	stroke-dasharray: 24;
+	stroke-dashoffset: 24;
+	animation: check-draw 460ms cubic-bezier(0.65, 0, 0.35, 1) 70ms forwards;
+}
+
+@keyframes check-draw {
+	to { stroke-dashoffset: 0; }
+}
+
+.animate-slide-in {
+	animation: sidebar-in 200ms ease-out;
+}
+
+@keyframes sidebar-in {
+	from {
+		opacity: 0;
+		transform: translateX(-18px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes page-enter {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 768px) {
+	.app-container {
+		padding: 1rem;
+	}
+
+	.clean-hero {
+		padding: 1.1rem;
+	}
+}
+
+/* Honor reduced-motion everywhere: page/sidebar/modal entrances and any
+   transition collapse to an instant state change instead of moving. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Indeterminate progress bar (SMAPI install: extracting/installing stages). */
+@keyframes smapi-progress-slide {
+	0% { transform: translateX(-120%); }
+	100% { transform: translateX(320%); }
+}
+.smapi-progress-indeterminate {
+	animation: smapi-progress-slide 1.1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.smapi-progress-indeterminate { animation: none; }
+}
+
+/* Rendered mod descriptions (Markdown from Modrinth/Thunderstore). Content is
+   sanitized before it reaches the DOM; these rules only style the safe output. */
+.mmop-markdown {
+	color: var(--text-secondary);
+	font-size: 0.875rem;
+	line-height: 1.65;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+.mmop-markdown > *:first-child { margin-top: 0; }
+.mmop-markdown > *:last-child { margin-bottom: 0; }
+.mmop-markdown h1,
+.mmop-markdown h2,
+.mmop-markdown h3,
+.mmop-markdown h4 {
+	color: var(--text-primary);
+	font-weight: 700;
+	line-height: 1.3;
+	margin: 1.4em 0 0.5em;
+}
+.mmop-markdown h1 { font-size: 1.35rem; }
+.mmop-markdown h2 { font-size: 1.2rem; }
+.mmop-markdown h3 { font-size: 1.05rem; }
+.mmop-markdown h4 { font-size: 0.95rem; }
+.mmop-markdown p { margin: 0.75em 0; }
+.mmop-markdown a {
+	color: var(--accent-bright);
+	text-decoration: none;
+}
+.mmop-markdown a:hover { text-decoration: underline; }
+.mmop-markdown img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 6px;
+	margin: 0.25em 0;
+}
+.mmop-markdown ul,
+.mmop-markdown ol {
+	margin: 0.75em 0;
+	padding-left: 1.5em;
+}
+.mmop-markdown ul { list-style: disc; }
+.mmop-markdown ol { list-style: decimal; }
+.mmop-markdown li { margin: 0.25em 0; }
+.mmop-markdown code {
+	font-family: var(--font-mono);
+	font-size: 0.85em;
+	background: rgba(255, 255, 255, 0.07);
+	padding: 0.12em 0.4em;
+	border-radius: 4px;
+}
+.mmop-markdown pre {
+	background: var(--surface-soft);
+	border: 1px solid var(--surface-border);
+	border-radius: 8px;
+	padding: 0.85em 1em;
+	overflow-x: auto;
+	margin: 0.85em 0;
+}
+.mmop-markdown pre code {
+	background: none;
+	padding: 0;
+	font-size: 0.82rem;
+}
+.mmop-markdown blockquote {
+	border-left: 3px solid var(--accent-border);
+	margin: 0.85em 0;
+	padding: 0.1em 0 0.1em 1em;
+	color: var(--text-muted);
+}
+.mmop-markdown hr {
+	border: none;
+	border-top: 1px solid var(--surface-border);
+	margin: 1.25em 0;
+}
+.mmop-markdown table {
+	border-collapse: collapse;
+	margin: 0.85em 0;
+	display: block;
+	overflow-x: auto;
+}
+.mmop-markdown th,
+.mmop-markdown td {
+	border: 1px solid var(--surface-border);
+	padding: 0.4em 0.7em;
+	text-align: left;
+}
+.mmop-markdown th { background: rgba(255, 255, 255, 0.04); }
